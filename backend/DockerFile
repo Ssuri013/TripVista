@@ -1,0 +1,15 @@
+# Import the official NodeJS image; which sets up node for us in the container
+FROM node:latest
+
+# Create app directory
+# RUN mkdir -p /usr/src/app
+
+# Install app dependencies
+COPY package*.json ./
+RUN npm install
+
+# Bundle app source
+COPY . .
+Expose 3000 
+# Run a command with arguments
+CMD ["node","index.js"]
