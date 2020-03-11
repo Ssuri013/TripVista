@@ -1,15 +1,14 @@
-# Import the official NodeJS image; which sets up node for us in the container
-FROM node:latest
+FROM node:current-alpine
 
-# Create app directory
-# RUN mkdir -p /usr/src/app
+ENV NODE_ENV=production
 
-# Install app dependencies
-COPY package*.json ./
-RUN npm install
+RUN mkdir /app
+WORKDIR /app
 
-# Bundle app source
+COPY package.json package-lock.json ./
+
+RUN npm install --production
+
 COPY . .
-Expose 3000 
-# Run a command with arguments
-CMD ["node","index.js"]
+
+CMD ["npm", "start"]
