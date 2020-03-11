@@ -5,7 +5,7 @@ const util = require("util");
 let con = mysql.createConnection({
 	host: "raasta-batao.crpu0wgb5jau.us-east-1.rds.amazonaws.com",
 	user: "admin",
-	password: "ms07ps10",
+	password: "",
 	database: "TravelGuide"
 });
 
@@ -80,7 +80,7 @@ module.exports = {
 			},
 			async handler() {
 				const query = util.promisify(con.query).bind(con);
-				let x = await query("SELECT * FROM places where hits DESC limit 10");
+				let x = await query("SELECT * FROM places order by hits DESC limit 10");
 				return x;
 			}
 		},
