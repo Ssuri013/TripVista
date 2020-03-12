@@ -1,1 +1,19 @@
-<p>places works!</p>
+<mat-card class="searchBar">
+    <mat-form-field>
+        <input matInput placeholder="Search..." [(value)]="searchTerm"/>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Category</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let i of categories" [value]="i.value">
+            {{i.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+<button mat-button mat-raised-button color="primary">Top 10</button>
+</mat-card>
+
+
+<mat-card *ngFor="let i of places">
+    {{i.name}}
+</mat-card>
