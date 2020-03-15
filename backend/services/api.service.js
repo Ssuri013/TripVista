@@ -46,7 +46,8 @@ module.exports = {
 				autoAliases: false,
 
 				aliases: {
-
+					"POST booking/book": "booking.bookTicket",
+					"GET booking/history": "booking.ticketHistory"
 				},
 
 				/** 
