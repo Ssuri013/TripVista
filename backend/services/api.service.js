@@ -46,7 +46,8 @@ module.exports = {
 				autoAliases: false,
 
 				aliases: {
-
+					"GET bus": "bus.busList",
+					"GET searchBus": "bus.searchBus"
 				},
 
 				/** 
