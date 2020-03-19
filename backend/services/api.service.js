@@ -48,6 +48,8 @@ module.exports = {
 				aliases: {
 					"GET bus": "bus.busList",
 					"GET searchBus": "bus.searchBus"
+					"POST booking/book": "booking.bookTicket",
+					"GET booking/history": "booking.ticketHistory"
 				},
 
 				/** 
