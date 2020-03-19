@@ -16,6 +16,7 @@ module.exports = (model) => {
 		adapter: new SqlAdapter(db, dbUser, dbPassword, {
 			host: dbHost,
 			dialect: dbType,
+			ssl: true,
 			define: {
 				freezeTableName: true
 			}
