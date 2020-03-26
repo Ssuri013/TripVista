@@ -21,7 +21,7 @@ module.exports = {
 		cors: {
 			origin: "**",
 			methods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
-			allowedHeaders: [],
+			allowedHeaders: ["Content-Type", "Access-Control-Allow-Headers", "X-Requested-With", "Origin"],
 			exposedHeaders: [],
 			credentials: false,
 			maxAge: 3600
@@ -47,7 +47,7 @@ module.exports = {
 
 				aliases: {
 					"GET bus": "bus.busList",
-					"GET searchBus": "bus.searchBus"
+					"GET searchBus": "bus.searchBus",
 					"POST booking/book": "booking.bookTicket",
 					"GET booking/history": "booking.ticketHistory"
 				},

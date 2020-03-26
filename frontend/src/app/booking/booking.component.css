@@ -1,0 +1,21 @@
+.busLookup {
+    margin: 40px;
+}
+.busLookup > * {
+    margin-left: 100px;
+}
+
+.searchTable {
+    margin: 40px;
+}
+
+.bookC {
+    margin: 40px;
+}
+
+.bookC > * {
+    margin-left: 400px;
+}
+
+
+
