@@ -1,18 +1,9 @@
 "use strict";
-let mysql = require("mysql");
-const util = require("util");
+const DbMixin = require("../mixins/db.mixin");
+const placesModel = require("../models/places.model");
+// const sequelize = require("sequelize");
 
-let con = mysql.createConnection({
-	host: "raasta-batao.crpu0wgb5jau.us-east-1.rds.amazonaws.com",
-	user: "admin",
-	password: "",
-	database: "TravelGuide"
-});
 
-con.connect(function (err) {
-	if (err) throw err;
-	console.log("Connected!");
-});
 /**
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
@@ -20,28 +11,14 @@ con.connect(function (err) {
 module.exports = {
 	name: "places",
 
-	/**
-	 * Settings
-	 */
-	settings: {
+	mixins: [DbMixin(placesModel)],
 
-	},
+	settings: {},
 
-	/**
-	 * Dependencies
-	 */
 	dependencies: [],
 
-	/**
-	 * Actions
-	 */
 	actions: {
 
-		/**
-		 * Say a 'Hello' action.
-		 *
-		 * @returns
-		 */
 		search: {
 			rest: {
 				method: "GET",
@@ -50,11 +27,10 @@ module.exports = {
 			params: {
 				search: "string"
 			},
-			async handler(ctx) {//implement event
-				const query = util.promisify(con.query).bind(con);
+			async handler(ctx) {
+				let places = await this.adapter.find({query:{name:ctx.params.search}});
 				ctx.emit("popularPlace", ctx.params.search);
-				let x = await query("SELECT * FROM places where name='" + ctx.params.search + "'");
-				return x;
+				return places;
 			}
 		},
 
@@ -67,21 +43,23 @@ module.exports = {
 				cat: "string"
 			},
 			async handler(ctx) {
-				const query = util.promisify(con.query).bind(con);
-				let x = await query("SELECT * FROM places where category='" + ctx.params.cat + "'");
-				return x;
+				let result = await this.adapter.find({query:{category:ctx.params.cat}});
+				return result;
 			}
 		},
 
-		topPlaces: {
+		topplaces: {
 			rest: {
 				method: "GET",
 				path: "/topplaces"
 			},
 			async handler() {
-				const query = util.promisify(con.query).bind(con);
-				let x = await query("SELECT * FROM places order by hits DESC limit 10");
-				return x;
+				let places = await this.adapter.find({ 
+					limit: 10 ,
+					order: 'hits DESC'
+				});
+				return places;
+				
 			}
 		},
 
@@ -92,8 +70,17 @@ module.exports = {
 	 */
 	events: {
 		"popularPlace"(place) {
-			console.log("event triggered " + place.payload);
-			con.query("update places set hits = hits + 1 where name='" + place + "';");	
+			console.log("event triggered " + place);
+			// let places = this.adapter.update(
+			// 	{hits: this.Sequalize.literal('hits + 1')},
+			// 	{where: {name: place}}
+			//   );
+			// let p = this.adapter.update({ hits: sequelize.literal('hits + 1') }, { where: { name: place } });
+			//   this.adapter.sync()
+			//   .then(() => this.apater.find({ name: places }))
+			//   .then(() => this.adapter.update({ hits: Sequelize.literal('field + 1') }, { where: { id: 1 }}))
+			//   .then(console.log);
+			// let p = this.adapter._update("update places set hits = hits + 1 where name='" + place + "';");
 		}
 	},
 
@@ -126,18 +113,5 @@ module.exports = {
 	}
 };
 
-//database structure
-// CREATE DATABASE TravelGuide;
-// USE TravelGuide;
-// create table places ( place_id INT, name varchar(45), category varchar(45), location varchar(45), description varchar(45), lat double, lon double);
-// desc places;
 
-// insert into places (place_id, name, category, location, description, lat, lon) values (1, "waterfront", "sea", "Halifax", "Beautiful view", 1.4, 12.44);
-// insert into places (place_id, name, category, location, description, lat, lon) values (2, "something else", "sea", "Halifax", "Beautiful view", 1.4, 12.44);
-// insert into places (place_id, name, category, location, description, lat, lon) values (3, "aur kuch nahi hai yaha", "others", "Halifax", "Beautiful view", 1.4, 12.44);
-// ALTER TABLE places ADD hits INT NOT NULL DEFAULT 0;
-
-// select * from places;
-// select * from places where name='waterfront';
-// select * from places where category='sea';
-// SELECT * FROM places order by hits DESC limit 1
+// insert into placesInt (place_id, name, category, location, decription, lat, lon, hits, images, createdAt, updatedAt) values (1, "waterfront", "sea", "Halifax", "Beautiful view", 1.4, 12.44, 0, "images", NOW(), NOW());

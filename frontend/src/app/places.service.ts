@@ -13,10 +13,11 @@ export class PlacesService {
   }
 
   getSearch(keyword: String) {
-    return this.http.get("http://localhost:3000/api/places/getplace?search='" + keyword + "'");
+    return this.http.get("http://localhost:3000/api/places/search?search=" + keyword);
   }
 
   getCategory(cat: String) {
-    return this.http.get("http://localhost:3000/api/places/categories?cat='" + cat + "'");
+    return this.http.get("http://localhost:3000/api/places/categories?cat=" + cat);
   }
+
 }
