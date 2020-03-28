@@ -53,6 +53,7 @@ module.exports = {
 					"POST users/login": "user.login",
 					"POST mailer": "mail.send",	
 					"POST users/verify": "user.verify",	
+					"GET booking/history": "booking.ticketHistory"
 				},
 				callingOptions: {},
 

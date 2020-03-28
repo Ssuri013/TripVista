@@ -11,11 +11,29 @@ module.exports = {
 
 	name: "bus",
 	mixins: [DbMixin(busModel)],
-	settings: {},
-	metadata: {},
-	dependencies: [],
-	actions: {
 
+	/**
+	 * Service settings
+	 */
+	settings: {},
+
+	/**
+	 * Service metadata
+	 */
+	metadata: {},
+
+	/**
+	 * Service dependencies
+	 */
+	dependencies: [],
+
+	/**
+	 * Actions
+	 */
+	actions: {
+		/**
+		* Test action
+		*/
 		busList: {
 			async handler(ctx) {
 				let to=await this.adapter.db.query("Select distinct `to` from bus",{ type: Sequelize.QueryTypes.SELECT });
@@ -41,14 +59,37 @@ module.exports = {
 		}
 	},
 
-	events: {	
+	/**
+	 * Events
+	 */
+	events: {
+		
 	},
+
+	/**
+	 * Methods
+	 */
 	methods: {
+
 	},
+
+	/**
+	 * Service created lifecycle event handler
+	 */
 	created() {
+
 	},
+
+	/**
+	 * Service started lifecycle event handler
+	 */
 	async started() {
+
 	},
+
+	/**
+	 * Service stopped lifecycle event handler
+	 */
 	async stopped() {
 
 	}

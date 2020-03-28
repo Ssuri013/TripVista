@@ -25,10 +25,12 @@
     "moleculer-repl": "^0.6.2"
   },
   "dependencies": {
+
     "bcrypt": "^4.0.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
+    "dotenv": "^8.2.0",
     "moleculer": "^0.14.0",
     "moleculer-db": "^0.8.4",
     "moleculer-db-adapter-mongo": "^0.4.7",
