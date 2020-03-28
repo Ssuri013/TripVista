@@ -10,6 +10,8 @@ import { BookingComponent } from './booking/booking.component';
 import { MaterialModule } from './material.module';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RegisterComponent } from './register/register.component';
+import { VerifyUserComponent } from './verify-user/verify-user.component';
 
 
 @NgModule({
@@ -18,6 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     PlacesComponent,
     LoginComponent,
     BookingComponent,
+    RegisterComponent,
+    VerifyUserComponent
   ],
   imports: [
     BrowserModule,

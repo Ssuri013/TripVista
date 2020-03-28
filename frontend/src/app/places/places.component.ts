@@ -12,6 +12,7 @@ export class PlacesComponent implements OnInit {
     {value: 'food', viewValue: 'Food'},
     {value: 'historical', viewValue: 'Historical'}
   ];
+  selectedCategory = ""
   
   searchTerm: String = "";
   
@@ -20,7 +21,19 @@ export class PlacesComponent implements OnInit {
   constructor(private ps: PlacesService) { }
 
   ngOnInit() {
+    this.getTopPlaces();
+  }
+
+  getTopPlaces() {
     this.ps.getTop().subscribe(x => {this.places = x});
   }
 
+  searchKeyword() {
+    this.ps.getSearch(this.searchTerm).subscribe(x => {this.places = x});
+  }
+
+  getCategory() {
+    this.ps.getCategory(this.selectedCategory).subscribe(x => {this.places = x});
+  }
+  
 }
