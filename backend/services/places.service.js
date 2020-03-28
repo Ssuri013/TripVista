@@ -1,4 +1,19 @@
 "use strict";
+
+let mysql = require("mysql");
+const util = require("util");
+
+//let con = mysql.createConnection({
+	//host: "raasta-batao.crpu0wgb5jau.us-east-1.rds.amazonaws.com",
+	//user: "admin",
+	//password: "",
+	//database: "TravelGuide"
+//});
+
+/**con.connect(function (err) {
+	if (err) throw err;
+	console.log("Connected!");
+});
 const DbMixin = require("../mixins/db.mixin");
 const placesModel = require("../models/places.model");
 // const sequelize = require("sequelize");

@@ -12,7 +12,6 @@ module.exports = {
 	name: "bus",
 	mixins: [DbMixin(busModel)],
 
-
 	/**
 	 * Service settings
 	 */
