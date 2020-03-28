@@ -1,0 +1,14 @@
+<p>verify here</p>
+
+
+<mat-card class="login_form">
+    <mat-form-field appearance="fill">
+        <mat-label>Token</mat-label>     
+        <input matInput placeholder="Enter your token here!" name="token"
+         #usetoken = "ngModel" [(ngModel)]="token" required>
+        </mat-form-field>
+        {{email}}
+<button mat-button mat-button-raised (click) ="verify_token()">Submit</button>
+</mat-card>
+    
+

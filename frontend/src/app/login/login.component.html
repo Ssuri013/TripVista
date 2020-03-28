@@ -1,1 +1,23 @@
-<p>login works!</p>
+<div class="forms-container"> 
+    <form #userForm="ngForm" name="form" (ngSubmit)="onSubmit()" novalidate>
+        <mat-card class="login_form">
+        <mat-form-field appearance="fill">
+            <mat-label>Enter your email</mat-label>     
+            <input matInput placeholder="abc@example.com" type="email" name="email"
+             #email = "ngModel" class="form-control" [(ngModel)]="userModel.email" required>
+        </mat-form-field>
+        <mat-form-field>
+        <mat-label>Password</mat-label>
+            <input matInput placeholder="Password" type="password" name="password" #password = "ngModel" class="form-control" [(ngModel)]="userModel.password" required>
+            </mat-form-field>
+            <button mat-button mat-button-raised type="submit">Login</button>
+            <mat-form-field>
+            <mat-label>
+            Don't have a Username? 
+        </mat-label></mat-form-field>
+   
+        <button mat-button mat-button-raised [routerLink]="['/register']">Register Now !</button>
+    </mat-card>
+    </form>
+</div>
+<router-outlet></router-outlet>
