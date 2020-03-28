@@ -21,7 +21,7 @@ module.exports = {
 		cors: {
 			origin: "**",
 			methods: ["GET", "OPTIONS", "POST", "PUT", "DELETE"],
-			allowedHeaders: ["Content-Type"],
+			allowedHeaders: ["Content-Type", "Access-Control-Allow-Headers", "X-Requested-With", "Origin"],
 			exposedHeaders: [],
 			credentials: false,
 			maxAge: 3600
