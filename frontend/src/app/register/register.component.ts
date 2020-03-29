@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../service/users.service';
-import { MailerService } from '../service/mailer.service';
 import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
 
 @Component({
@@ -17,8 +16,9 @@ export class RegisterComponent {
     hide = true;
     step1 = true;
     token: String = "";
+    uniqueId = "";
 
-    constructor(private _service: UserService, private router: Router, private _mailService: MailerService, fb: FormBuilder) {
+    constructor(private _service: UserService, private router: Router, fb: FormBuilder) {
         this.registerForm = fb.group({
             username: this.formUsername,
             email: this.formEmail,
@@ -28,25 +28,22 @@ export class RegisterComponent {
 
     onSubmit() {
         console.log(this.formEmail);
-        this._mailService.sendMail(this.registerForm.value).subscribe(
+        this._service.sendMail(this.registerForm.value).subscribe(
             data => {
                 console.log('response ', data);
+                this.uniqueId = data.id;
                 this.step1 = !this.step1;
             }
         )
     }
 
     verify_token() {
-        let data = { email: this.registerForm.value.email, token:  this.token}
+        let data = { id: this.uniqueId, code:  +this.token}
         console.log("insider verify token function", data);
         this._service.verifyUser(data).subscribe(
             data => {
                 console.log('response in verify', data);
-                var userdetails = data;
-                var uservalue = userdetails['user'];
-                var token = uservalue['token'];
-                localStorage.setItem("token", token)
-                console.log('Success ', userdetails['user'], token)
+                localStorage.setItem("token", this.uniqueId)
                 this.router.navigate(["/"]);
             },
             error => console.log('ERROR', error)

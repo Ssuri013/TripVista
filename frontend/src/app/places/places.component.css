@@ -14,3 +14,12 @@
     margin: 50px;
     margin-left: 100px;
 }
+
+.mat-card-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mat-button {
+    max-height: 50px;
+}
