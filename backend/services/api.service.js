@@ -42,7 +42,7 @@ module.exports = {
 					"POST user/login": "user.login",
 					"POST user/verify": "user.verifyCode",
 					"GET places": "places.getAllPlaces",
-					"POST places/search": "places.searchPlace",
+					"GET places/search/:search": "places.searchPlace",
 					"GET places/categories": "places.getAllCategories",
 					"GET places/:id":"places.getPlaceById",
 					"GET places/category/:category": "places.getByCategory",

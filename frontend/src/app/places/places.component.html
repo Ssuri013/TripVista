@@ -1,17 +1,35 @@
 <mat-card class="searchBar">
+    <div>
+
     <mat-form-field>
-        <input matInput placeholder="Search..." [(value)]="searchTerm"/>
+        <input matInput placeholder="Search..." [(ngModel)]="searchTerm"/>
     </mat-form-field>
-    <mat-form-field>
+    <button mat-button mat-raised-button color="primary" (click)="searchKeyword()">Search</button>
+  </div>
+    <div><mat-form-field>
         <mat-label>Category</mat-label>
-        <mat-select>
+        <mat-select [(ngModel)]="selectedCategory">
           <mat-option *ngFor="let i of categories" [value]="i.value">
             {{i.viewValue}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-<button mat-button mat-raised-button color="primary">Top 10</button>
+      <button mat-button mat-raised-button color="primary" (click)="getCategory()">Fetch</button>
+    </div>
+    <button mat-button mat-raised-button color="primary">Top 10</button>
 </mat-card>
-<mat-card *ngFor="let i of places">
-    {{i.name}}
+
+<mat-card *ngFor="let i of places" class="display-cards">
+  <mat-card-header>
+    <mat-card-title>{{i.name}}</mat-card-title> 
+    <button mat-raised-button [routerLink]="['/bookings', i.location]" color="primary">Book Bus</button>
+    <mat-card-subtitle> {{i.lon + ", " + i.lat}}</mat-card-subtitle>
+  </mat-card-header>
+  <img mat-card-image src={{i.images}} >
+  <mat-card-content>
+    <p>
+      {{i.decription}}    
+    </p>
+  </mat-card-content>
+  
 </mat-card>

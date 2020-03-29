@@ -5,19 +5,23 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class PlacesService {
-
+  serverUrl = "http://localhost:3000";
   constructor(private http: HttpClient) { }
 
+  getAllPlaces() {
+    return this.http.get(this.serverUrl + "/api/places");
+  }
+  
   getTop() {
-    return this.http.get("http://localhost:3000/api/places/topplaces");
+    return this.http.get(this.serverUrl +  "/api/places/top10");
   }
 
   getSearch(keyword: String) {
-    return this.http.get("http://localhost:3000/api/places/search?search=" + keyword);
+    return this.http.get(this.serverUrl +  "/api/places/search/" + keyword);
   }
 
   getCategory(cat: String) {
-    return this.http.get("http://localhost:3000/api/places/categories?cat=" + cat);
+    return this.http.get( this.serverUrl + "/api/places/category/" + cat);
   }
 
 }

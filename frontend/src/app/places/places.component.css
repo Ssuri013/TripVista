@@ -1,6 +1,25 @@
 .searchBar {
     margin: 40px;
+    display: flex;
+    flex-direction: row;
 }
 .searchBar > * {
     margin-left: 50px;
+    flex-grow: 1;
+}
+
+.display-cards {
+    max-width: 300px;
+    display: inline-block;
+    margin: 50px;
+    margin-left: 100px;
+}
+
+.mat-card-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.mat-button {
+    max-height: 50px;
 }

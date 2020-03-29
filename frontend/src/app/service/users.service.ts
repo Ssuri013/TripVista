@@ -22,8 +22,12 @@ export class UserService {
 }
   verifyUser(token)
   {
-    var tokens =  {token}
-    console.log(tokens);
-    return this.http.post("http://localhost:3000/api/users/verify",tokens);
+    return this.http.post("http://localhost:3000/api/user/verify",token);
   }
+
+  sendMail(email) {
+    console.log(email);
+    return this.http.post<any>("http://localhost:3000/api/user/register",email); 
+  }
+
 }

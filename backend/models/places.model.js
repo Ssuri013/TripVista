@@ -20,7 +20,7 @@ const model = {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
-		description: {
+		decription: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},

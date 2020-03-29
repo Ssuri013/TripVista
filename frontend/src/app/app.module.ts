@@ -11,8 +11,8 @@ import { MaterialModule } from './material.module';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RegisterComponent } from './register/register.component';
-import { VerifyUserComponent } from './verify-user/verify-user.component';
-
+import { HomeComponent } from './home/home.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,7 @@ import { VerifyUserComponent } from './verify-user/verify-user.component';
     LoginComponent,
     BookingComponent,
     RegisterComponent,
-    VerifyUserComponent
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +30,8 @@ import { VerifyUserComponent } from './verify-user/verify-user.component';
     MaterialModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
