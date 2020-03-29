@@ -4,14 +4,13 @@ import { PlacesComponent } from './places/places.component';
 import { LoginComponent } from './login/login.component';
 import { BookingComponent } from './booking/booking.component';
 import { RegisterComponent} from './register/register.component';
-import { VerifyUserComponent} from './verify-user/verify-user.component';
+import { HomeComponent } from './home/home.component';
 
-const routes: Routes = [ { path: '', component: LoginComponent },
+const routes: Routes = [ { path: '', component:  HomeComponent},
 { path: 'places', component: PlacesComponent },
 { path: 'bookings', component: BookingComponent },
 { path: 'login', component: LoginComponent},
-{ path: 'register', component: RegisterComponent},
-{ path: 'verify/:id', component: VerifyUserComponent}];
+{ path: 'register', component: RegisterComponent}];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

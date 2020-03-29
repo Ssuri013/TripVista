@@ -1,25 +1,35 @@
-<div class="container-fluid mb-5">
-      
-    <form #userForm="ngForm" name="form" (ngSubmit)="onSubmit()" novalidate>
-        <div class="form-group">
-            <label>
-                Name
-            </label>
-            <input type="text" name="username" #username = "ngModel" class="form-control" [(ngModel)]="userModel.username">
-        </div>
-        <div class="form-group">
-            <label>
-                Email
-            </label>
-            <input type="email" name="email" #email = "ngModel" class="form-control" [(ngModel)]="userModel.email">
-        </div>
-        <div class="form-group">
-            <label>
-                Password
-            </label>
-            <input type="password" name="password" #password = "ngModel" class="form-control" [(ngModel)]="userModel.password">
-        </div>
-        <div class="form-group">
-        <button class="btn btn-primary" type="submit">Register</button></div>
+<div class="forms-container">
+    <form [formGroup]="registerForm" *ngIf="step1">
+        <mat-card class="register_form">
+            <mat-form-field appearance="outline">
+                <mat-label>Enter Name</mat-label>
+                <input matInput type="text" [formControl]="formUsername">
+                <mat-error *ngIf="formEmail.invalid">Invalid Email ID</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Enter Email</mat-label>
+                <input matInput type="email" [formControl]="formEmail">
+                <mat-error *ngIf="formEmail.invalid">Invalid Email ID</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Enter your password</mat-label>
+                <input matInput [type]="hide ? 'password' : 'text'" [formControl]="formPassword">
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+            <button mat-raised-button (click)="onSubmit()" color="primary">Submit</button>
+        </mat-card>
     </form>
+    
+    <mat-card class="register_form" *ngIf="!step1">
+        <mat-form-field appearance="fill">
+            <mat-label>Token</mat-label>
+            <input matInput placeholder="Enter your token here!"  [(ngModel)]="token"
+                required>
+        </mat-form-field>
+        {{"    " + formEmail.value}}
+        <button mat-button mat-button-raised (click)="verify_token()">Submit</button>
+    </mat-card>
 </div>

@@ -4,3 +4,10 @@
 .searchBar > * {
     margin-left: 50px;
 }
+
+.display-cards {
+    max-width: 300px;
+    display: inline-block;
+    margin: 50px;
+    margin-left: 100px;
+}

@@ -1,8 +1,8 @@
-<mat-toolbar color="primary">
-    <span style="margin-right: 30px">Menu</span>
+<mat-toolbar color="primary" *ngIf="!homeurl">
+    <button mat-button mat-button-raised [routerLink]="['/']">Home</button>
     <button mat-button mat-button-raised [routerLink]="['/places']">Places</button>
     <button mat-button mat-button-raised [routerLink]="['/bookings']">Booking</button>
-    <mat-icon aria-hidden="false" aria-label="Example heart icon" [routerLink]="['/login']">person_outline</mat-icon>
+    <mat-icon aria-hidden="false" aria-label="Example heart icon" [routerLink]="['/login']" style="cursor: pointer;">person_outline</mat-icon>
 </mat-toolbar>
 
 <router-outlet></router-outlet>
