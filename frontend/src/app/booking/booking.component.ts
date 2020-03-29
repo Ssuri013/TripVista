@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BookingService } from '../booking.service';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-booking',
@@ -23,7 +24,7 @@ export class BookingComponent implements OnInit {
   price: String;
   test: any;
 
-  constructor(private bs: BookingService) {
+  constructor(private bs: BookingService, private route: ActivatedRoute) {
     const currentDate = new Date();
     this.minDate=currentDate;
     this.bookPressed=false
@@ -60,10 +61,15 @@ export class BookingComponent implements OnInit {
       //console.log("ABCD")
       //console.log(this.buses);
     }
+
   );
+  this.route.params.subscribe(params => {
+    this.toChangeHandler({value: params['place']})
+});
   }
 
   toChangeHandler (event: any) {
+    console.log(event)
     this.toBus = event.value;
   }
 

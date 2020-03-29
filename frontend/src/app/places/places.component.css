@@ -1,8 +1,11 @@
 .searchBar {
     margin: 40px;
+    display: flex;
+    flex-direction: row;
 }
 .searchBar > * {
     margin-left: 50px;
+    flex-grow: 1;
 }
 
 .display-cards {

@@ -11,7 +11,7 @@ export class MailerService {
   sendMail(email){
 
     console.log(email);
-    return this.http.post<any>("http://localhost:3000/api/mailer",email); 
+    return this.http.post<any>("http://localhost:3000/api/user/register",email); 
 
   }
 }
