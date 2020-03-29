@@ -23,6 +23,10 @@ const model = {
 		price: {
 			type: DataTypes.DOUBLE,
 			allowNull: false
+		},
+		seats: {
+			type: DataTypes.INTEGER,
+			allowNull: false
 		}
 	},
 	options: {

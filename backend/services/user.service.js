@@ -4,349 +4,242 @@ const { MoleculerClientError } = require("moleculer").Errors;
 const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Sequelize = require("sequelize");
 const DbMixin = require("../mixins/db.mixin");
+const MailService = require("moleculer-mail");
 
 module.exports = {
+
 	name: "user",
+
 	mixins: [
-		DbMixin(userModel)
+		DbMixin(userModel),
+		MailService
 	],
+
 	settings: {
 
-		rest: "/",
-		/** Secret for JWT */
-		JWT_SECRET: process.env.JWT_SECRET || "jwt-conduit-secret",
-
-		/** Public fields */
-		fields: ["_id", "username", "email"],
-
-		/** Validator schema for entity */
-		entityValidator: {
-			username: { type: "string", min: 2 },
-			password: { type: "string", min: 6 },
-			email: { type: "email" },
-		}
-	},
-	actions: {
-		create: {
-			rest: "POST /users",
-			params: {
-				user: { type: "object" }
-			},
-			async handler(ctx) {
-                let entity = ctx.params.user;
-                entity.password = bcrypt.hashSync(entity.password, 10);
-				//entity.createdAt = new Date();
-				//await this.entityChanged("created", json, ctx);
-				console.log("user details : ", ctx.params.user);
-                let userModel = {
-                    name: entity.username,
-                    email: entity.email,
-                    password: entity.password
-				};
-				console.log("user model values : ", userModel);
-
-                let result = await this.adapter.insert(userModel);
-                return result;				
+		from: "tripvista001@gmail.com",
+		transport: {
+			service: "gmail",
+			auth: {
+				user: "tripvista001@gmail.com",
+				pass: "tripvista@123"
 			}
 		},
-		login: {
-			rest: "POST /users/login",
-			params: {
-				user: { type: "object", props: {
-					email: { type: "email" },
-					password: { type: "string", min: 1 }
-				} }
-			},
-			async handler(ctx) {
-				const { email, password } = ctx.params.user;
+		JWT_SECRET: process.env.JWT_SECRET || "jwt-conduit-secret"
 
-				const user = await this.adapter.findOne({ email });
+	},
+	actions: {
+
+		register: {
+
+			params: {
+				email: "string",
+				password: "string",
+				username: "string"
+			},
+
+			async handler(ctx) {
+				let username = ctx.params.username;
+				let password = bcrypt.hashSync(ctx.params.password, 10);
+				let email = ctx.params.email;
+
+				if (!this.validateEmail(email)) {
+					throw new MoleculerClientError("Invalid Email", 422, "VALIDATION_ERROR", {
+						error: "Please provide a proper email"
+					});
+				}
+
+				if (!this.validatePassword(password)) {
+					throw new MoleculerClientError("Invalid Password", 422, "VALIDATION_ERROR", {
+						error: "Please provide a proper password"
+					});
+				}
+
+				if (!this.validateUsername(username)) {
+					throw new MoleculerClientError("Invalid Username", 422, "VALIDATION_ERROR", {
+						error: "Please provide a proper username"
+					});
+				}
+
+				let user = await this.adapter.findOne({ where: { email } });
+				if (user) {
+					throw new MoleculerClientError("Invalid Email", 422, "VALIDATION_ERROR", {
+						error: "Email already exists"
+					});
+				}
+
+				let verificationToken = this.generateVerificatonToken();
+
+				let result = await ctx.call("user.send", {
+					to: email,
+					subject: "Trip Vista Account Verification",
+					html: `<b>Hello ${username},</b><h1>Your verification code : ${verificationToken}</h1> 
+                    Please enter the code on Trip Vista to get verified. Thanks!`,
+				});
+
+				if (!result.accepted) {
+					throw new MoleculerClientError("Invalid Email", 422, "VALIDATION_ERROR", {
+						error: "Sorry could not send email to your Email ID"
+					});
+				}
+
+				let userModel = {
+					username: username,
+					email: email,
+					password: password,
+					verified: false,
+					token: verificationToken
+				};
+				try {
+					let userResult = await this.adapter.insert(userModel);
+					return {
+						id: userResult.id
+					};
+				} catch (err) {
+					throw new MoleculerClientError("Error while inserting in database", 500, "INTERNAL_ERROR", {
+						error: "Error while inserting in database"
+					});
+				}
+			}
+
+		},
+
+		login: {
+
+			params: {
+				email: "string",
+				password: "string"
+			},
+
+			async handler(ctx) {
+				const email = ctx.params.email;
+				const password = ctx.params.password;
+
+				const user = await this.adapter.findOne({ where: { email } });
 				if (!user)
-					throw new MoleculerClientError("Email or password is invalid!", 422, "", [{ field: "email", message: "is not found" }]);
+					throw new MoleculerClientError("Email or password is invalid!", 422, "", [{ message: "Email or password is invalid!" }]);
+
+				if (!user.verified)
+					throw new MoleculerClientError("User not verified", 422, "", [{ message: "Email or password is invalid!" }]);
 
 				const res = await bcrypt.compare(password, user.password);
 				if (!res)
-					throw new MoleculerClientError("Wrong password!", 422, "", [{ field: "email", message: "is not found" }]);
+					throw new MoleculerClientError("Email or password is invalid!", 422, "", [{ message: "Email or password is invalid!" }]);
 
-				// Transform user entity (remove password and all protected fields)
-				const doc = await this.transformDocuments(ctx, {}, user);
-				return await this.transformEntity(doc, true, ctx.meta.token);
+				let token = this.generateJWT(user);
+				return {
+					token,
+					id: user.id
+				};
 			}
+
 		},
 
-		/**
-		 * Get user by JWT token (for API GW authentication)
-		 *
-		 * @actions
-		 * @param {String} token - JWT token
-		 *
-		 * @returns {Object} Resolved user
-		 */
-		resolveToken: {
-			cache: {
-				keys: ["token"],
-				ttl: 60 * 60 // 1 hour
+		verifyCode: {
+
+			params: {
+				id: "string",
+				code: "number"
 			},
+
+			async handler(ctx) {
+				const id = ctx.params.id;
+				let user = await this.adapter.findById(id);
+				if (user) {
+					let verifcationCode = user.token;
+					if (!user.verified) {
+						if (ctx.params.code == verifcationCode) {
+							try {
+								let result = await this.adapter.updateById(id, {
+									"$set": {
+										verified: 1,
+										updatedAt: new Date()
+									}
+								});
+								console.log(this.adapter.entityToObject(result));
+								return {
+									verified: true
+								};
+							} catch (err) {
+								throw new MoleculerClientError("Error while updating in database", 500, "INTERNAL_ERROR", {
+									error: "Error while updating in database"
+								});
+							}
+						} else {
+							return {
+								verified: false
+							};
+						}
+					} else {
+						throw new MoleculerClientError("User is also validated", 422, "VALIDATION_ERROR", {
+							error: "User is already validated"
+						});
+					}
+				} else {
+					throw new MoleculerClientError("Invalid User Id", 422, "VALIDATION_ERROR", {
+						error: "No user related to this ID"
+					});
+				}
+			}
+
+		},
+		resolveToken: {
+
 			params: {
 				token: "string"
 			},
+
 			async handler(ctx) {
-				const decoded = await new this.Promise((resolve, reject) => {
-					jwt.verify(ctx.params.token, this.settings.JWT_SECRET, (err, decoded) => {
-						if (err)
-							return reject(err);
-						resolve(decoded);
-					});
-				});
-
-				if (decoded.id)
-					return this.getById(decoded.id);
-			}
-		},
-
-	updateToken:{
-
-		async handler(ctx){
-			let userModel = {
-				name: ctx.params.name,
-				email: ctx.params.email,
-				password: ctx.params.password,
-				token: ctx.params.token
-			};
-	
-			console.log("ctx in update token,",ctx.params)
-			console.log("userModel,",userModel)
-			let result = await this.adapter.insert(userModel);
-		}
-
-	},	
-	
-	verify:{
-		rest: "POST /users/verify",
-
-		async handler(ctx){
-		
-	
-			console.log("ctx in verify token,",ctx.params)
-			console.log("userModel,",ctx.params.token.email)
-			const user = await this.adapter.findOne({ email:ctx.params.token.email });
-			console.log("user",user)
-				if (user.token==ctx.params.token.token)
-				{
-				const doc = await this.adapter.updateById(ctx.meta.user._id, update);
-				let result = await this.adapter.update(userModel);
-				return "update successful";
-			}
-				else{
-					throw new MoleculerClientError("Wrong token!");
+				try {
+					let decoded = jwt.verify(ctx.params.token, this.settings.JWT_SECRET);
+					return Promise.resolve(decoded);
+				} catch (err) {
+					return Promise.reject(err);
 				}
+			}
 
 		}
 
 	},
 
-		/**
-		 * Update current user entity.
-		 * Auth is required!
-		 *
-		 * @actions
-		 *
-		 * @param {Object} user - Modified fields
-		 * @returns {Object} User entity
-		 */
-		updateMyself: {
-			auth: "required",
-			rest: "PUT /user",
-			params: {
-				user: { type: "object", props: {
-					username: { type: "string", min: 2, optional: true, pattern: /^[a-zA-Z0-9]+$/ },
-					password: { type: "string", min: 6, optional: true },
-					email: { type: "email", optional: true },
-					bio: { type: "string", optional: true },
-					image: { type: "string", optional: true },
-				} }
-			},
-			async handler(ctx) {
-				const newData = ctx.params.user;
-				if (newData.username) {
-					const found = await this.adapter.findOne({ username: newData.username });
-					if (found && found._id.toString() !== ctx.meta.user._id.toString())
-						throw new MoleculerClientError("Username is exist!", 422, "", [{ field: "username", message: "is exist" }]);
-				}
-
-				if (newData.email) {
-					const found = await this.adapter.findOne({ email: newData.email });
-					if (found && found._id.toString() !== ctx.meta.user._id.toString())
-						throw new MoleculerClientError("Email is exist!", 422, "", [{ field: "email", message: "is exist" }]);
-				}
-				newData.updatedAt = new Date();
-				const update = {
-					"$set": newData
-				};
-				const doc = await this.adapter.updateById(ctx.meta.user._id, update);
-
-				const user = await this.transformDocuments(ctx, {}, doc);
-				const json = await this.transformEntity(user, true, ctx.meta.token);
-				await this.entityChanged("updated", json, ctx);
-				return json;
-			}
-		},
-
-		list: {
-			rest: "GET /users"
-		},
-
-		get: {
-			rest: "GET /users/:id"
-		},
-
-		update: {
-			rest: "PUT /users/:id"
-		},
-
-		remove: {
-			rest: "DELETE /users/:id"
-		},
-
-
-		/**
-		 * Get a user profile.
-		 *
-		 * @actions
-		 *
-		 * @param {String} username - Username
-		 * @returns {Object} User entity
-		 */
-		profile: {
-			cache: {
-				keys: ["#userID", "username"]
-			},
-			rest: "GET /profiles/:username",
-			params: {
-				username: { type: "string" }
-			},
-			async handler(ctx) {
-				const user = await this.adapter.findOne({ username: ctx.params.username });
-				if (!user)
-					throw new MoleculerClientError("User not found!", 404);
-
-				const doc = await this.transformDocuments(ctx, {}, user);
-				return await this.transformProfile(ctx, doc, ctx.meta.user);
-			}
-		},
-
-		/**
-		 * Follow a user
-		 * Auth is required!
-		 *
-		 * @actions
-		 *
-		 * @param {String} username - Followed username
-		 * @returns {Object} Current user entity
-		 */
-		follow: {
-			auth: "required",
-			rest: "POST /profiles/:username/follow",
-			params: {
-				username: { type: "string" }
-			},
-			async handler(ctx) {
-				const user = await this.adapter.findOne({ username: ctx.params.username });
-				if (!user)
-					throw new MoleculerClientError("User not found!", 404);
-
-				await ctx.call("follows.add", { user: ctx.meta.user._id.toString(), follow: user._id.toString() });
-				const doc = await this.transformDocuments(ctx, {}, user);
-				return await this.transformProfile(ctx, doc, ctx.meta.user);
-			}
-		},
-
-		/**
-		 * Unfollow a user
-		 * Auth is required!
-		 *
-		 * @actions
-		 *
-		 * @param {String} username - Unfollowed username
-		 * @returns {Object} Current user entity
-		 */
-		unfollow: {
-			auth: "required",
-			rest: "DELETE /profiles/:username/follow",
-			params: {
-				username: { type: "string" }
-			},
-			async handler(ctx) {
-				const user = await this.adapter.findOne({ username: ctx.params.username });
-				if (!user)
-					throw new MoleculerClientError("User not found!", 404);
-
-				await ctx.call("follows.delete", { user: ctx.meta.user._id.toString(), follow: user._id.toString() });
-				const doc = await this.transformDocuments(ctx, {}, user);
-				return await this.transformProfile(ctx, doc, ctx.meta.user);
-			}
-		}
-	},
-
-	/**
-	 * Methods
-	 */
 	methods: {
-		/**
-		 * Generate a JWT token from user entity
-		 *
-		 * @param {Object} user
-		 */
+		
 		generateJWT(user) {
 			const today = new Date();
 			const exp = new Date(today);
-			exp.setDate(today.getDate() + 60);
+			exp.setDate(today.getDate() + 1);
 
 			return jwt.sign({
-				id: user._id,
+				id: user.id,
 				username: user.username,
 				exp: Math.floor(exp.getTime() / 1000)
 			}, this.settings.JWT_SECRET);
 		},
 
-		/**
-		 * Transform returned user entity. Generate JWT token if neccessary.
-		 *
-		 * @param {Object} user
-		 * @param {Boolean} withToken
-		 */
-		transformEntity(user, withToken, token) {
-			if (user) {
-				//user.image = user.image || "https://www.gravatar.com/avatar/" + crypto.createHash("md5").update(user.email).digest("hex") + "?d=robohash";
-				user.image = user.image || "";
-				if (withToken)
-					user.token = token || this.generateJWT(user);
-			}
-
-			return { user };
+		generateVerificatonToken() {
+			return Math.floor(Math.random() * 10000);
 		},
 
-		/**
-		 * Transform returned user entity as profile.
-		 *
-		 * @param {Context} ctx
-		 * @param {Object} user
-		 * @param {Object?} loggedInUser
-		 */
-		async transformProfile(ctx, user, loggedInUser) {
-			//user.image = user.image || "https://www.gravatar.com/avatar/" + crypto.createHash("md5").update(user.email).digest("hex") + "?d=robohash";
-			user.image = user.image || "https://static.productionready.io/images/smiley-cyrus.jpg";
+		validateEmail(email) {
+			let regularExpression = /\S+@\S+\.\S+/;
+			return regularExpression.test(email);
+		},
 
-			if (loggedInUser) {
-				const res = await ctx.call("follows.has", { user: loggedInUser._id.toString(), follow: user._id.toString() });
-				user.following = res;
+		validatePassword(password) {
+			if (password.length >= 8) {
+				return true;
 			} else {
-				user.following = false;
+				return false;
 			}
+		},
 
-			return { profile: user };
+		validateUsername(username) {
+			if (username.length >= 4) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 };

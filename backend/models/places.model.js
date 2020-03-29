@@ -20,7 +20,7 @@ const model = {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
-		decription: {
+		description: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
@@ -42,7 +42,7 @@ const model = {
 		},
 	},
 	options: {
-		tableName: "placesInt"
+		tableName: "places"
 	}
 };
 

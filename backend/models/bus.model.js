@@ -5,6 +5,7 @@ const model = {
 	define: {
 		b_id: {
 			type: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true
 		},
 		to: {
@@ -14,16 +15,16 @@ const model = {
 		from: {
 			type: DataTypes.STRING,
 			allowNull: false
-        },
-        price: {
+		},
+		price: {
 			type: DataTypes.DOUBLE,
 			allowNull: false
-        },
-        seats: {
-			type: DataTypes.UUID,
+		},
+		seats: {
+			type: DataTypes.INTEGER,
 			allowNull: false
 		},
-        arr: {
+		arr: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
@@ -33,8 +34,8 @@ const model = {
 		},
 	},
 	options: {
-        tableName: "bus",
-        timestamps: false,
+		tableName: "bus",
+		timestamps: false,
 	}
 };
 
