@@ -27,10 +27,10 @@ export class LoginComponent {
       this._service.loginUser(this.loginForm.value).subscribe(
         data => {
           var userdetails = data;
-          var uservalue = userdetails['user'];
-          var token = uservalue['token'];
+          //var uservalue = userdetails['user'];
+          var token = userdetails['token'];
           localStorage.setItem("token", token)
-          console.log('Success ', userdetails['user'], token)
+          //console.log('Success ', userdetails['user'], token)
           this.router.navigate(["/places"]);
         },
         error => console.log('ERROR', error)
