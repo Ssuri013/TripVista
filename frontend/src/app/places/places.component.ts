@@ -36,5 +36,9 @@ export class PlacesComponent implements OnInit {
   getCategory() {
     this.ps.getCategory(this.selectedCategory).subscribe(x => {this.places = x});
   }
+
+  reportHit(data: any) {
+    this.ps.reportPlaceHit(data.place_id).subscribe( x => console.log("successful report of hit to analysis engine"));
+  }
   
 }

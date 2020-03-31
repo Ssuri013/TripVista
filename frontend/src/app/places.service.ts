@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class PlacesService {
-  serverUrl = "http://localhost:3000";
+  serverUrl = "https://www.tripvista.club";
   constructor(private http: HttpClient) { }
 
   getAllPlaces() {
@@ -22,6 +22,10 @@ export class PlacesService {
 
   getCategory(cat: String) {
     return this.http.get( this.serverUrl + "/api/places/category/" + cat);
+  }
+
+  reportPlaceHit(id: String) {
+    return this.http.get( this.serverUrl + "/api/places/" + id );
   }
 
 }

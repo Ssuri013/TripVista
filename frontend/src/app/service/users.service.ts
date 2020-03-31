@@ -5,29 +5,30 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class UserService {
-
+  url= "https://www.tripvista.club";
   constructor(private http: HttpClient) { }
 
   loginUser(user){
     var users =  {user}
     console.log(users);
-    return this.http.post("http://localhost:3000/api/user/login",user); 
+    return this.http.post(this.url + "/api/user/login",user); 
 }
 
   createUser(user){
     var users =  {user}
     console.log(users);
-    return this.http.post("http://localhost:3000/api/users",users);
+    return this.http.post(this.url + "/api/users",users);
   
 }
   verifyUser(token)
   {
-    return this.http.post("http://localhost:3000/api/user/verify",token);
+    return this.http.post(this.url + "/api/user/verify",token);
   }
 
   sendMail(email) {
     console.log(email);
-    return this.http.post<any>("http://localhost:3000/api/user/register",email); 
+    return this.http.post<any>(this.url + "/api/user/register",email); 
   }
+  
 
 }
