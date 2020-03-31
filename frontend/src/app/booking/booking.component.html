@@ -36,23 +36,23 @@
     <mat-table [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="b_id">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Bus-No. </mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.b_id}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>  </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{i+1}} </mat-cell>
         </ng-container>
     
         <ng-container matColumnDef="dep">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Departure </mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.dep}} </mat-cell>
+          <mat-cell *matCellDef="let row"> {{row.arr}} </mat-cell>
         </ng-container>
     
         <ng-container matColumnDef="arr">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Arrival </mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.arr}} </mat-cell>
+          <mat-cell *matCellDef="let row"> {{row.dep}} </mat-cell>
         </ng-container>
     
         <ng-container matColumnDef="price">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Price </mat-header-cell>
-          <mat-cell *matCellDef="let row">${{row.price}} </mat-cell>
+          <mat-cell *matCellDef="let row">${{row.price*busSearch.get("selSeats").value}} </mat-cell>
         </ng-container>
     
         <ng-container matColumnDef="seats">

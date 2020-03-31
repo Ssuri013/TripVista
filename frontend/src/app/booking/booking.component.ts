@@ -24,7 +24,8 @@ export class BookingComponent implements OnInit {
   price: number;
   test: any;
   sucPay: boolean;
-  bookingHist: Object
+  bookingHist: Object;
+  i: number=0
 
   constructor(private bs: BookingService, private route: ActivatedRoute) {
     const currentDate = new Date();
