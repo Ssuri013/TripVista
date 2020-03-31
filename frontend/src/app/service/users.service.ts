@@ -11,7 +11,7 @@ export class UserService {
   loginUser(user){
     var users =  {user}
     console.log(users);
-    return this.http.post("http://localhost:3000/api/users/login",users); 
+    return this.http.post("http://localhost:3000/api/user/login",user); 
 }
 
   createUser(user){

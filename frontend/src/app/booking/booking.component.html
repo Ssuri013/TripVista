@@ -1,10 +1,10 @@
 <form name="userForm" (ngSubmit)="onSubmit()" [formGroup]="busSearch"> <!--[formGroup]="busSearch"-->
-    <mat-card class="busLookup">
+    <mat-card *ngIf="!sucPay" class="busLookup">
         <mat-form-field>
             <mat-label>To</mat-label>
             <mat-select placeholder="To" formControlName="busTo" (selectionChange)="toChangeHandler($event)"> <!---->
-            <mat-option *ngFor="let i of to" [value]="i.to">
-                {{i.to}}
+            <mat-option *ngFor="let i of to" [value]="i">
+                {{i}}
             </mat-option>
         </mat-select>
         <mat-error *ngIf="busSearch.get('busTo').invalid">This Field is required</mat-error>
@@ -12,8 +12,8 @@
         <mat-form-field>
             <mat-label>From</mat-label>
             <mat-select placeholder="From" formControlName="busFrom" (selectionChange)="fromChangeHandler($event)"> <!---->
-            <mat-option *ngFor="let i of from" [value]="i.from">
-                {{i.from}}
+            <mat-option *ngFor="let i of from" [value]="i">
+                {{i}}
             </mat-option>
         </mat-select>
         <mat-error *ngIf="busSearch.get('busFrom').invalid">This Field is required</mat-error>
@@ -24,15 +24,20 @@
             <mat-datepicker #myDatepicker></mat-datepicker>
             <mat-error *ngIf="busSearch.get('date').invalid">This Field is required</mat-error>
         </mat-form-field>
+        <mat-form-field style="width:8%">
+                <input type="number"  matInput placeholder="Seats" formControlName="selSeats"> 
+                <!-- (change)="xxx()"formControlName="value" -->
+        </mat-form-field>
         <button type="submit" [disabled]="!busSearch.valid" mat-raised-button>Search</button>
     </mat-card>
+
 </form>
 <mat-card *ngIf="dataSource && !bookPressed && !flag" class="searchTable" > 
     <mat-table [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="b_id">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Bus-No. </mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.b_id}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>  </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{i+1}} </mat-cell>
         </ng-container>
     
         <ng-container matColumnDef="dep">
@@ -47,7 +52,7 @@
     
         <ng-container matColumnDef="price">
           <mat-header-cell *matHeaderCellDef mat-sort-header> Price </mat-header-cell>
-          <mat-cell *matCellDef="let row">${{row.price}} </mat-cell>
+          <mat-cell *matCellDef="let row">${{row.price*busSearch.get("selSeats").value}} </mat-cell>
         </ng-container>
     
         <ng-container matColumnDef="seats">
@@ -66,22 +71,59 @@
     </mat-table>
 </mat-card>
 
+
+
 <div *ngIf="flag" class="searchTable">
     <p>
         No Buses Found!!
     </p>
 </div>
 
-<mat-card *ngIf="bookPressed" class="bookC">
+<mat-card *ngIf="bookPressed && !sucPay" class="bookC">
     <!-- <form (ngSubmit)="onSubmitBook()"> -->
     <mat-form-field>
         <mat-label>Card Details</mat-label>
         <input matInput placeholder="Enter Card Details" [(ngModel)]="cardNo" [formControl]="cardValidator" />
         <mat-error *ngIf="cardValidator.invalid">Please Enter the Card No.</mat-error>
     </mat-form-field><br>
-    <button (click)="pay()" mat-raised-button [disabled]="!cardValidator.valid">Book</button>
-    <p *ngIf="test">{{test}}</p>
+    <button (click)="pay()" mat-raised-button [disabled]="!cardValidator.valid" style="margin-left: 550px;">Book</button>
     <!-- </form> -->
+</mat-card>
+
+
+<mat-card *ngIf="sucPay" class="histTable" > 
+    <h3>Booking History</h3>
+    <mat-table [dataSource]="bookingHist" matSort>
+
+        <ng-container matColumnDef="booking_id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Ticket No. </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.booking_id}} </mat-cell>
+          </ng-container>
+
+        <ng-container matColumnDef="booking_date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Booking Date </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.booking_date}} </mat-cell>
+        </ng-container>
+    
+        <ng-container matColumnDef="seats">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Seats </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.seats}} </mat-cell>
+        </ng-container>
+    
+        <ng-container matColumnDef="price">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Price </mat-header-cell>
+          <mat-cell *matCellDef="let row"> ${{row.price}} </mat-cell>
+        </ng-container>
+<!--     
+        <ng-container matColumnDef="price">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Price </mat-header-cell>
+          <mat-cell *matCellDef="let row">${{row.price}} </mat-cell>
+        </ng-container> -->
+    
+        <mat-header-row *matHeaderRowDef="displayedHist"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedHist;">
+        </mat-row>
+    </mat-table>
 </mat-card>
 
 

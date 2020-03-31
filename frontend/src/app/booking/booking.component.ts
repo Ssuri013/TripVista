@@ -21,8 +21,11 @@ export class BookingComponent implements OnInit {
   flag: boolean;
   bookPressed: boolean;
   cardNo: String;
-  price: String;
+  price: number;
   test: any;
+  sucPay: boolean;
+  bookingHist: Object;
+  i: number=0
 
   constructor(private bs: BookingService, private route: ActivatedRoute) {
     const currentDate = new Date();
@@ -31,11 +34,13 @@ export class BookingComponent implements OnInit {
    }
 
    displayedColumns = ['b_id', 'dep', 'arr', 'price', 'seats','booknow'];
+   displayedHist = ['booking_id','booking_date','seats', 'price'];
 
    busSearch=new FormGroup({
     busTo: new FormControl('',Validators.required),//
     busFrom: new FormControl('',Validators.required),//Validators.required
-    date: new FormControl('',Validators.required)
+    date: new FormControl('',Validators.required),
+    selSeats: new FormControl('',Validators.required)
    })
 
    cardValidator: FormControl =  new FormControl('', [Validators.required]);
@@ -56,8 +61,8 @@ export class BookingComponent implements OnInit {
 
   ngOnInit() {
       this.bs.getBusToFrom().subscribe(data => {
-      this.to = data[0]
-      this.from = data[1]
+      this.to = data['to']
+      this.from = data['from']
       //console.log("ABCD")
       //console.log(this.buses);
     }
@@ -76,7 +81,7 @@ export class BookingComponent implements OnInit {
   fromChangeHandler (event: any) {
     this.fromBus = event.value;
   }
-  
+ 
 
 
   bookTicket(bID,price){
@@ -87,19 +92,40 @@ export class BookingComponent implements OnInit {
 
   pay()
   {
-    this.bs.payment("1",this.busId,this.date,this.price,this.cardNo).subscribe(data => {
+    this.bs.payment(this.busId,this.price*this.busSearch.get("selSeats").value,this.cardNo,this.busSearch.get("selSeats").value).subscribe(data => {
         this.test=data
-    });
+        this.sucPay=true
+        console.log(this.test)
+        if(this.sucPay){
+          this.bs.bookingHistory().subscribe(data=>{
+            this.bookingHist=data
+            console.log(this.bookingHist)
+            console.log("aaaaa")
+          })
+      }
+        //console.log("dddddd")
+        //if(data)
+        //console.log(data)
+    },
+    err=>{
+      this.sucPay=false
+      alert("Card Not Valid!! Try Again")
+      this.cardNo=""
+    }
+      );
+
+
   }
   
   
   onSubmit() {
       
-      this.bs.searchBus(this.toBus,this.fromBus).subscribe(data => {
+      this.bs.searchBus(this.toBus,this.fromBus,this.busSearch.get("selSeats").value).subscribe(data => {
       if(Array.isArray(data) && data.length){
         this.dataSource = data;
         this.flag = false;
         this.bookPressed=false;
+        this.sucPay=false;
       }
       else{
         this.flag=true;
