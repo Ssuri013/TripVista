@@ -75,4 +75,4 @@ Database
 
     select * from places;
     "
-5) All Done.
+5) All Done
