@@ -51,7 +51,7 @@ module.exports = {
 					});
 				}
 
-				if (!this.validatePassword(password)) {
+				if (!this.validatePassword(ctx.params.password)) {
 					throw new MoleculerClientError("Invalid Password", 422, "VALIDATION_ERROR", {
 						error: "Please provide a proper password"
 					});
