@@ -11,23 +11,23 @@ export class UserService {
   loginUser(user){
     var users =  {user}
     console.log(users);
-    return this.http.post("http://localhost:3000/api/user/login",user); 
+    return this.http.post("https://www.tripvista.club/api/user/login",user); 
 }
 
   createUser(user){
     var users =  {user}
     console.log(users);
-    return this.http.post("http://localhost:3000/api/users",users);
+    return this.http.post("https://www.tripvista.club/api/users",users);
   
 }
   verifyUser(token)
   {
-    return this.http.post("http://localhost:3000/api/user/verify",token);
+    return this.http.post("https://www.tripvista.club/api/user/verify",token);
   }
 
   sendMail(email) {
     console.log(email);
-    return this.http.post<any>("http://localhost:3000/api/user/register",email); 
+    return this.http.post<any>("https://www.tripvista.club/api/user/register",email); 
   }
 
 }

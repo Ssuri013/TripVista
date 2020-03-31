@@ -3,6 +3,7 @@ import { BookingService } from '../booking.service';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-booking',
@@ -23,11 +24,12 @@ export class BookingComponent implements OnInit {
   cardNo: String;
   price: number;
   test: any;
-  sucPay: boolean;
+  sucPay: boolean=false;
   bookingHist: Object;
-  i: number=0
+  i: number=0;
+  btnText: String="Booking History";
 
-  constructor(private bs: BookingService, private route: ActivatedRoute) {
+  constructor(private bs: BookingService, private route: ActivatedRoute, private router: Router) {
     const currentDate = new Date();
     this.minDate=currentDate;
     this.bookPressed=false
@@ -60,6 +62,7 @@ export class BookingComponent implements OnInit {
   }
 
   ngOnInit() {
+
       this.bs.getBusToFrom().subscribe(data => {
       this.to = data['to']
       this.from = data['from']
@@ -101,6 +104,7 @@ export class BookingComponent implements OnInit {
             this.bookingHist=data
             console.log(this.bookingHist)
             console.log("aaaaa")
+            this.btnText="Back"
           })
       }
         //console.log("dddddd")
@@ -109,7 +113,7 @@ export class BookingComponent implements OnInit {
     },
     err=>{
       this.sucPay=false
-      alert("Card Not Valid!! Try Again")
+      alert(err['error']['data']['error'])
       this.cardNo=""
     }
       );
@@ -117,6 +121,31 @@ export class BookingComponent implements OnInit {
 
   }
   
+  bookHistory(){
+    console.log('sssss')
+    // if(!this.sucPay){
+    //   this.sucPay=true
+    // }
+    // else{
+    //   this.sucPay=false
+    // }
+
+    if(!this.sucPay){
+      this.bs.bookingHistory().subscribe(data=>{
+        this.bookingHist=data
+        console.log(this.bookingHist)
+        console.log("aaaaa")
+        this.sucPay=true
+        this.btnText="Back"
+      })
+    }
+    else{
+      this.sucPay=false
+      this.bookPressed=false
+      this.dataSource=null
+      this.btnText="Booking History"
+    }
+  }
   
   onSubmit() {
       

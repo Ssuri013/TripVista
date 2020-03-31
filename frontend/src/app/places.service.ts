@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class PlacesService {
-  serverUrl = "http://localhost:3000";
+  serverUrl = "https://www.tripvista.club";
   constructor(private http: HttpClient) { }
 
   getAllPlaces() {

@@ -1,3 +1,4 @@
+<button mat-button (click)="bookHistory()" color="primary" class="book">{{btnText}}</button>
 <form name="userForm" (ngSubmit)="onSubmit()" [formGroup]="busSearch"> <!--[formGroup]="busSearch"-->
     <mat-card *ngIf="!sucPay" class="busLookup">
         <mat-form-field>

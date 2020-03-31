@@ -45,7 +45,9 @@ export class LoginComponent {
           //console.log('Success ', userdetails['user'], token)
           this.router.navigate(["/places"]);
         },
-        error => console.log('ERROR', error)
+        err =>{
+          alert(err['error']['message'])
+        }
       )
     }
   }
