@@ -11,6 +11,8 @@ services:
     environment:
       SERVICES: api
       PORT: 3000
+    depends_on:
+      - nats
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
@@ -24,6 +26,8 @@ services:
       context: .
     image: travel-micro-guide
     env_file: docker-compose.env
+    depends_on:
+      - nats
     environment:
       SERVICES: places
     networks:
@@ -35,6 +39,8 @@ services:
       context: .
     image: travel-micro-guide
     env_file: docker-compose.env
+    depends_on:
+      - nats
     environment:
       SERVICES: bus
     networks:
@@ -46,6 +52,8 @@ services:
       context: .
     image: travel-micro-guide
     env_file: docker-compose.env
+    depends_on:
+      - nats
     environment:
       SERVICES: user
     networks:
@@ -57,8 +65,17 @@ services:
       context: .
     image: travel-micro-guide
     env_file: docker-compose.env
+    depends_on:
+      - nats
     environment:
       SERVICES: booking
+    networks:
+      - internal
+
+  nats:
+    image: nats
+    ports:
+      - "4222:4222"
     networks:
       - internal
 
