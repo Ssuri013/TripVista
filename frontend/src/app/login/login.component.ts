@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../service/users.service';
 import { Router } from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-login',
@@ -22,14 +21,15 @@ export class LoginComponent {
     });
   }
 
-  encryptData(data) {
-
-    try {
-      return CryptoJS.AES.encrypt(data, "nothing").toString();
-    } catch (e) {
-      console.log(e);
+  encryptData(text) {
+    let shift = 2;
+    var result = "";
+    for (var i = 0; i < text.length; i++) {
+        let c = text.charCodeAt(i);
+        result += String.fromCharCode(c + shift);         
     }
-  }
+    return result;
+}
 
   onSubmit() {
     if(this.loginForm.status === "VALID") {

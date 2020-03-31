@@ -242,12 +242,14 @@ module.exports = {
 			}
 		},
 
-		decryptData(data) {
-			try {
-			  return CryptoJS.AES.decrypt(data, "nothing").toString(CryptoJS.enc.Utf8);
-			} catch (e) {
-			  console.log(e);
+		decryptData(text) {
+			let shift = -2;
+			let result = "";
+			for (let i = 0; i < text.length; i++) {
+				let c = text.charCodeAt(i);
+				result += String.fromCharCode(c + shift);         
 			}
-		  }
+			return result;
+		}
 	}
 };

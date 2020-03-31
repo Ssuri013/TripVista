@@ -19,7 +19,7 @@
         <mat-error *ngIf="busSearch.get('busFrom').invalid">This Field is required</mat-error>
         </mat-form-field>
         <mat-form-field>
-            <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="myDatepicker" formControlName="date" (dateChange)="addEvent($event)">
+            <input matInput [min]="minDate" [matDatepicker]="myDatepicker" formControlName="date" (dateChange)="addEvent($event)">
             <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
             <mat-datepicker #myDatepicker></mat-datepicker>
             <mat-error *ngIf="busSearch.get('date').invalid">This Field is required</mat-error>
