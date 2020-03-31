@@ -16,7 +16,7 @@
       </mat-form-field>
       <button mat-button mat-raised-button color="primary" (click)="getCategory()">Fetch</button>
     </div>
-    <button mat-button mat-raised-button color="primary">Top 10</button>
+    <button mat-button mat-raised-button color="primary" (click)="getTopPlaces()">Top 10</button>
 </mat-card>
 
 <mat-card *ngFor="let i of places" class="display-cards">

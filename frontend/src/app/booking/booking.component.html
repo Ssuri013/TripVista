@@ -62,7 +62,8 @@
 
         <ng-container matColumnDef="booknow">
             <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
-            <mat-cell *matCellDef="let row"><button mat-button (click)="bookTicket(row.b_id,row.price)">Book Now</button></mat-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-button (click)="bookTicket(row.b_id,row.price)" color="primary">Book Now</button></mat-cell>
         </ng-container>
     
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

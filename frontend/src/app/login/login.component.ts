@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../service/users.service';
 import { Router } from '@angular/router';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-login',
@@ -21,10 +22,21 @@ export class LoginComponent {
     });
   }
 
+  encryptData(data) {
+
+    try {
+      return CryptoJS.AES.encrypt(data, "nothing").toString();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   onSubmit() {
     if(this.loginForm.status === "VALID") {
       console.log("user details", this.loginForm);
-      this._service.loginUser(this.loginForm.value).subscribe(
+      let temp = {...this.loginForm.value};
+      temp.password = this.encryptData(temp.password);
+      this._service.loginUser(temp).subscribe(
         data => {
           var userdetails = data;
           //var uservalue = userdetails['user'];

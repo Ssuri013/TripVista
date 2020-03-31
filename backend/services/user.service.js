@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const DbMixin = require("../mixins/db.mixin");
 const MailService = require("moleculer-mail");
+const CryptoJS = require("crypto-js");
 
 module.exports = {
 
@@ -114,8 +115,7 @@ module.exports = {
 
 			async handler(ctx) {
 				const email = ctx.params.email;
-				const password = ctx.params.password;
-
+				const password = this.decryptData(ctx.params.password);
 				const user = await this.adapter.findOne({ where: { email } });
 				if (!user)
 					throw new MoleculerClientError("Email or password is invalid!", 422, "", [{ message: "Email or password is invalid!" }]);
@@ -240,6 +240,14 @@ module.exports = {
 			} else {
 				return false;
 			}
-		}
+		},
+
+		decryptData(data) {
+			try {
+			  return CryptoJS.AES.decrypt(data, "nothing").toString(CryptoJS.enc.Utf8);
+			} catch (e) {
+			  console.log(e);
+			}
+		  }
 	}
 };

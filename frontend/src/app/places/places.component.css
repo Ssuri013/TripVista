@@ -20,6 +20,10 @@
     justify-content: space-between;
 }
 
-.mat-button {
-    max-height: 50px;
+.mat-raised-button {
+    height: fit-content;
+}
+
+.mat-form-field {
+    margin-right: 20px;
 }
