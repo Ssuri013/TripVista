@@ -25,7 +25,8 @@ export class BookingComponent implements OnInit {
   test: any;
   sucPay: boolean=false;
   bookingHist: Object;
-  i: number = 0
+  i: number = 0;
+  btnText = "Booking History"
 
 
 
@@ -35,7 +36,7 @@ export class BookingComponent implements OnInit {
   busSearch = new FormGroup({
     busTo: new FormControl('', Validators.required),
     busFrom: new FormControl('', Validators.required),
-    date: new FormControl('', Validators.required),
+
     selSeats: new FormControl('', [Validators.required, Validators.min(0), Validators.max(50)])
   })
 
@@ -101,7 +102,10 @@ export class BookingComponent implements OnInit {
   }
 
   pay() {
-    this.bs.payment(this.busId, this.price * this.busSearch.get("selSeats").value, this.cardNo, this.busSearch.get("selSeats").value).subscribe(data => {
+    if(this.cardDetails.value.cardNumber == "1".repeat(16)) {
+      this.cardDetails.value.cardNumber = "1111-1111-1111-1111"
+    }
+    this.bs.payment(this.busId, this.price * this.busSearch.get("selSeats").value, this.cardDetails.value.cardNumber, this.busSearch.get("selSeats").value).subscribe(data => {
       this.test = data
       this.sucPay = true
       if (this.sucPay) {
@@ -110,7 +114,6 @@ export class BookingComponent implements OnInit {
 
         })
       }
-
     },
     err=>{
       this.sucPay=false

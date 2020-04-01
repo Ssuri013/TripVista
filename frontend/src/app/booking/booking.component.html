@@ -20,20 +20,13 @@
       </mat-select>
       <mat-error *ngIf="busSearch.get('busFrom').invalid">This Field is required</mat-error>
     </mat-form-field>
-    <mat-form-field>
-      <input matInput [min]="minDate" [matDatepicker]="myDatepicker" formControlName="date"
-        (dateChange)="addEvent($event)">
-      <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
-      <mat-datepicker #myDatepicker></mat-datepicker>
-      <mat-error *ngIf="busSearch.get('date').invalid">This Field is required</mat-error>
-    </mat-form-field>
     <mat-form-field style="width:8%">
       <input type="number" min="0" matInput placeholder="Seats" formControlName="selSeats">
     </mat-form-field>
     <button type="submit" [disabled]="!busSearch.valid" mat-raised-button color="primary">Search</button>
   </mat-card>
-
 </form>
+
 <mat-card *ngIf="dataSource && !bookPressed && !flag" class="searchTable">
   <mat-table [dataSource]="dataSource" matSort>
 
@@ -100,7 +93,7 @@
       <mat-error *ngIf="cardCVV.status == 'INVALID'">Please Enter valid CVV number</mat-error>
     </mat-form-field>
 
-    <button (click)="pay()" mat-raised-button [disabled]="cardDetails.status != 'VALID'">Book</button>
+    <button (click)="pay()" mat-raised-button [disabled]="cardDetails.status != 'VALID'" color="primary">Book</button>
   </form>
 </mat-card>
 
