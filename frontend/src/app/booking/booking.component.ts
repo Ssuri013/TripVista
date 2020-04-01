@@ -27,25 +27,35 @@ export class BookingComponent implements OnInit {
   bookingHist: Object;
   i: number = 0
 
-  constructor(private bs: BookingService, private route: ActivatedRoute, private router: Router) {
-    const currentDate = new Date();
-    this.minDate = currentDate;
-    this.bookPressed = false
-  }
+
 
   displayedColumns = ['b_id', 'dep', 'arr', 'price', 'seats', 'booknow'];
   displayedHist = ['booking_id', 'booking_date', 'seats', 'price'];
 
   busSearch = new FormGroup({
-    busTo: new FormControl('', Validators.required),//
-    busFrom: new FormControl('', Validators.required),//Validators.required
+    busTo: new FormControl('', Validators.required),
+    busFrom: new FormControl('', Validators.required),
     date: new FormControl('', Validators.required),
-    selSeats: new FormControl('', Validators.required)
+    selSeats: new FormControl('', [Validators.required, Validators.min(0), Validators.max(50)])
   })
 
-  cardValidator: FormControl = new FormControl('', [Validators.required]);
+  cardDetails: FormGroup;
+  cardNumber = new FormControl('', [Validators.required, Validators.pattern('^[0-9]{16}$')]);
+  cardDate = new FormControl('', [Validators.required, Validators.pattern('(0[1-9]|1[0-2])\/([0-9]{2})')]); // pending
+  cardCVV = new FormControl('', [Validators.required, Validators.pattern("^[0-9]{3}$")]);
+  
 
-
+  
+  constructor(private bs: BookingService, private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
+    const currentDate = new Date();
+    this.minDate = currentDate;
+    this.bookPressed = false;
+    this.cardDetails = fb.group({
+      cardNumber: this.cardNumber,
+      cardDate: this.cardDate,
+      cardCVV: this.cardCVV,
+    });
+  }
 
   addEvent(event: MatDatepickerInputEvent<Date>) {
     this.date = event.value.toLocaleDateString()
@@ -53,16 +63,15 @@ export class BookingComponent implements OnInit {
   }
 
   cValid() {
-    if (this.cardNo = "") {
-      return false;
+    if (this.cardNo && this.cardNo.length == 16) {
+      return true;
     }
-    return true
+    return false;
   }
 
   ngOnInit() {
     let token = localStorage.getItem("token")
-    console.log(token)
-    if(token == null || token==""){
+    if (token == null || token == "") {
       this.router.navigate(["/login"])
     }
     this.bs.getBusToFrom().subscribe(data => {
@@ -98,7 +107,7 @@ export class BookingComponent implements OnInit {
       if (this.sucPay) {
         this.bs.bookingHistory().subscribe(data => {
           this.bookingHist = data
-         
+
         })
       }
 
@@ -112,7 +121,6 @@ export class BookingComponent implements OnInit {
 
 
   }
-
 
   onSubmit() {
 

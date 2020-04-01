@@ -11,11 +11,11 @@
 
 .bookC {
     margin: 40px;
+    width: 300px;
+    padding: 50px;
 }
 
-.bookC > * {
-    margin-left: 500px;
+.cardDetails {
+    display: flex;
+    flex-direction: column;
 }
-
-
-
