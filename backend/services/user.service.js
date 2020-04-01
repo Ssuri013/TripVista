@@ -6,7 +6,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const DbMixin = require("../mixins/db.mixin");
 const MailService = require("moleculer-mail");
-const CryptoJS = require("crypto-js");
 
 module.exports = {
 
