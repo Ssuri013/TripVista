@@ -13,12 +13,23 @@ export class LoginComponent {
   formEmail = new FormControl("", { validators: [Validators.email, Validators.required]});
   formPassword = new FormControl("", { validators: Validators.required});
   hide = true;
+  loggedIn = false;
 
   constructor(private _service: UserService, private router: Router, fb: FormBuilder) {
     this.loginForm = fb.group({
       email: this.formEmail,
       password: this.formPassword,
     });
+  }
+
+  ngOnInit(): void {
+    let token = localStorage.getItem("token")
+    if (token == null || token == "") {
+      this.loggedIn = false;
+    }
+    else {
+      this.loggedIn = true;
+    }
   }
 
   encryptData(text) {
@@ -50,5 +61,10 @@ export class LoginComponent {
         }
       )
     }
+  }
+
+  logout(){
+    localStorage.removeItem("token");
+    this.loggedIn = false;
   }
 }
