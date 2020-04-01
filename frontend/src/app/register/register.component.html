@@ -4,7 +4,7 @@
             <mat-form-field appearance="outline">
                 <mat-label>Enter Name</mat-label>
                 <input matInput type="text" [formControl]="formUsername">
-                <mat-error *ngIf="formEmail.invalid">Invalid Email ID</mat-error>
+                <mat-error *ngIf="formEmail.invalid">Invalid User ID</mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>Enter Email</mat-label>
@@ -30,6 +30,6 @@
                 required>
         </mat-form-field>
         {{"    " + formEmail.value}}
-        <button mat-button mat-button-raised (click)="verify_token()">Submit</button>
+        <button mat-button mat-button-raised (click)="verify_token()" [disabled]="!token">Submit</button>
     </mat-card>
 </div>

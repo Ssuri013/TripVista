@@ -33,7 +33,19 @@ export class RegisterComponent {
                 console.log('response ', data);
                 this.uniqueId = data.id;
                 this.step1 = !this.step1;
+            },
+            err=>{
+                if(err['error']['message']=="Invalid Username"){
+                    alert(err['error']['data']['error']+"(Four or more characters)")
+                }
+                else if(err['error']['message']=="Invalid Password"){
+                    alert(err['error']['data']['error']+"(Eight or more characters)")
+                }
+                else{
+                alert(err['error']['data']['error'])
+                }
             }
+
         )
     }
 
@@ -44,10 +56,16 @@ export class RegisterComponent {
             data => {
                 console.log('response in verify', data);
                 localStorage.setItem("token", this.uniqueId)
-                this.router.navigate(["/"]);
+                if(!data['verified']){
+                    alert("Please Check Your Token and Try Again!")
+                }
+                else{
+                    alert("Verification Successful")
+                    this.router.navigate(["/"]); 
+                }
+                
             },
-            error => console.log('ERROR', error)
-        )
 
+        )
     }
 }

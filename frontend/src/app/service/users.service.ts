@@ -30,5 +30,4 @@ export class UserService {
     return this.http.post<any>(this.url + "/api/user/register",email); 
   }
   
-
 }

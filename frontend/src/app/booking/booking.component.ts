@@ -23,7 +23,7 @@ export class BookingComponent implements OnInit {
   cardNo: String;
   price: number;
   test: any;
-  sucPay: boolean;
+  sucPay: boolean=false;
   bookingHist: Object;
   i: number = 0
 
@@ -112,16 +112,42 @@ export class BookingComponent implements OnInit {
       }
 
     },
-      err => {
-        this.sucPay = false
-        alert("Card Not Valid!! Try Again")
-        this.cardNo = ""
-      }
-    );
+    err=>{
+      this.sucPay=false
+      alert(err['error']['data']['error'])
+      this.cardNo=""
+    }
+      );
 
 
   }
+  
+  bookHistory(){
+    console.log('sssss')
+    // if(!this.sucPay){
+    //   this.sucPay=true
+    // }
+    // else{
+    //   this.sucPay=false
+    // }
 
+    if(!this.sucPay){
+      this.bs.bookingHistory().subscribe(data=>{
+        this.bookingHist=data
+        console.log(this.bookingHist)
+        console.log("aaaaa")
+        this.sucPay=true
+        this.btnText="Back"
+      })
+    }
+    else{
+      this.sucPay=false
+      this.bookPressed=false
+      this.dataSource=null
+      this.btnText="Booking History"
+    }
+  }
+  
   onSubmit() {
 
     this.bs.searchBus(this.toBus, this.fromBus, this.busSearch.get("selSeats").value).subscribe(data => {
