@@ -1,4 +1,4 @@
-<div class="forms-container">
+<div class="forms-container" *ngIf="!loggedIn">
     <form [formGroup]="loginForm">
         <mat-card class="login_form">
             <mat-form-field appearance="outline">
@@ -22,3 +22,10 @@
         </mat-card>
     </form>
 </div>
+
+<div class="forms-container" *ngIf="loggedIn">
+        <mat-card class="login_form">
+                <button mat-button (click)="logout()" color="primary">Logout</button>
+        </mat-card>
+</div>
+
